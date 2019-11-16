@@ -1,8 +1,19 @@
+const ip = 'localhost:9000'
+const wsUrl = `ws://${ip}`
+const httpUrl = `http://${ip}`
+
 function display(text,type='info'){
-    $('#text-area').append(`<p class=${type}>${text}</p>`)
+    $('#display-area').append(`<p class=${type}>${text}</p>`)
 }
 
-let socket = new WebSocket("ws://localhost:9000");
+function displayImages(paths){
+    for(let p of paths){
+        let fullPath = `${httpUrl}${p}`
+        $('#display-area').append(`<img class="image" src=${fullPath}></img>`)
+    }
+}
+
+let socket = new WebSocket(wsUrl);
 socket.onopen = function(event) {
     display("[open] Connection established");
 }
@@ -18,7 +29,16 @@ $('#connect-button').click((event)=>{
 })
 
 socket.onmessage = function(event) {
-    display(`[message] Data received from server: ${event.data}`);
+    json = JSON.parse(event.data)
+    if(json.message) display(`[message] Data received from server: ${json.message}`);
+    else if(json.images){
+        console.log(json.images)
+        displayImages(json.images)
+    }
+    else {
+        console.log(json.json)
+        display(json)
+    }
 };
 
 socket.onclose = function(event) {

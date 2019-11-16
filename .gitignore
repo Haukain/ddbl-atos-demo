@@ -1,4 +1,6 @@
 core/build
 core/node_modules
+core/public/raw/*
+core/public/predictions/*
 raspberry/__pycache__
-raspberry/public
+raspberry/public/*

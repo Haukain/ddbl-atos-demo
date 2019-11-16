@@ -2,8 +2,13 @@ import * as express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import Raspberry from './src/Raspberry';
+import { cleanFolder, listFiles, wsSendMessage, wsSendJson } from './src/utils';
+
+cleanFolder('public/raw')
+cleanFolder('public/predictions')
 
 const app = express();
+app.use(express.static('public'))
 
 //initialize a simple http server
 const server = http.createServer(app);
@@ -19,16 +24,31 @@ wss.on('connection', (ws: WebSocket) => {
     ws.on('message', (message: string) => {
 
         if(message==='connect'){
-            ws.send('Connection test...');
+            wsSendMessage(ws,'Connection test...');
             raspberryPiClient.connect().then((e)=>{
-                e?ws.send('Connection successful'):ws.send('Connection failed');
+                e?wsSendMessage(ws,'Connection successful'):wsSendMessage(ws,'Connection failed');
             })
         }
 
         if(message==='start'){
-            ws.send('Starting process...');
+            wsSendMessage(ws,'Starting process...');
             raspberryPiClient.start().then((e)=>{
-                e?ws.send('Process successful'):ws.send('Process failed');
+                console.log('return value')
+                console.log(e)
+                e?wsSendMessage(ws,'Process successful'):wsSendMessage(ws,'Process failed');
+                if(e){
+                    listFiles('./public/raw')
+                    .then((files:any)=>{
+                        console.log('files:')
+                        console.log(files)
+                        wsSendJson(ws,files.map((e:any)=>`/raw/${e}`))
+                    })
+                    .catch((err:null|NodeJS.ErrnoException)=>{
+                        console.log('error:')
+                        console.error(err)
+                        wsSendJson(ws,[])
+                    })
+                }
             })
         }
         //log the received message and send it back to the client
@@ -36,7 +56,7 @@ wss.on('connection', (ws: WebSocket) => {
     });
 
     //send immediatly a feedback to the incoming connection    
-    ws.send('Connection established');
+    wsSendMessage(ws,'Connection established');
 });
 
 // start our server

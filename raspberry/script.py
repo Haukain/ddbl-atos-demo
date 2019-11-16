@@ -8,21 +8,25 @@ import cv2
 # import numpy as np 
 # import time
 
-def onConnect() :
+def on_connect() :
     print("Connection!")
     return jsonify({'success': "This is a successful connection"})
 
-def onStart() :
+def on_start() :
     print("Has started")
     
+    paths = []
+    cap = cv2.VideoCapture(0)
+    for i in range(0,3):
+        ret,frame = cap.read()
+        paths.append('img/%d.png' %i)
+        cv2.imwrite('./public/%d.png' %i,frame)
+    cap.release()
+
     return jsonify({
         'success': {
             'message': "This is a successful start",
-            'files': [
-                "file1"
-                "file2"
-                "file3"
-            ]
+            'files': paths
         }
     })
 

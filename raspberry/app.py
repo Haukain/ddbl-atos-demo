@@ -11,17 +11,15 @@ for f in os.listdir(folder):
     except Exception as e:
         print(e)
 
-open('./public/img.png','w')
-
 app = Flask(__name__,static_folder=os.path.abspath("public/"))
 
 @app.route("/")
 def index():
-    return script.onConnect()
+    return script.on_connect()
 
 @app.route("/start/")
 def start():
-    return script.onStart()
+    return script.on_start()
 
 @app.route('/img/<path:path>')
 def static_file(path):

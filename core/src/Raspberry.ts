@@ -1,4 +1,5 @@
 import {get,post} from './utils'
+import * as fs from 'fs';
 
 export default class Raspberry {
     localIP: string;
@@ -37,9 +38,17 @@ export default class Raspberry {
         return get(`${this.localIP}/start/`)
         .then((response:any) => {
             if(response.success){
-                console.log("start: "+response.success.message)
-                console.log("start: "+response.success.files)
-                return true
+                return this.get_images(response.success.files)
+                .then((e:any)=>{
+                    console.log('success')
+                    console.log(e)
+                    return true
+                })
+                .catch((err:any)=>{
+                    console.log('fail')
+                    console.error(err)
+                    return false
+                })
             }
             else if(response.error){
                 console.log("error starting: "+response.error)
@@ -54,5 +63,24 @@ export default class Raspberry {
             console.error(err)
             return false
         });
+    }
+
+    get_images(paths: Array<string>):any {
+        let promises = []
+        for(let p of paths){
+            promises.push(
+                get(`${this.localIP}/${p}`,false,null)
+                .then((response:any) =>{
+                    fs.writeFile(`./public/raw/${this.id}_${p.split('/')[1]}`, response,
+                        function(err) {
+                            if(err) {
+                                return err
+                            }
+                        }
+                    );
+                })
+            )
+        }
+        return Promise.all(promises)
     }
 }

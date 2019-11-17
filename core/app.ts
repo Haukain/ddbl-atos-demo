@@ -2,7 +2,7 @@ import * as express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import Raspberry from './src/Raspberry';
-import { cleanFolder, listFiles, wsSendMessage, wsSendJson } from './src/utils';
+import { cleanFolder, listFiles, wsSendMessage, wsSendImagesJson } from './src/utils';
 
 cleanFolder('public/raw')
 cleanFolder('public/predictions')
@@ -16,7 +16,7 @@ const server = http.createServer(app);
 //initialize the WebSocket server instance
 const wss = new WebSocket.Server({ server });
 
-const raspberryPiClient = new Raspberry("localhost:5000",0);
+const raspberryPiClient = new Raspberry(process.argv[2]?process.argv[2]:"localhost:5000",0);
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -31,22 +31,18 @@ wss.on('connection', (ws: WebSocket) => {
         }
 
         if(message==='start'){
+            cleanFolder('public/raw')
             wsSendMessage(ws,'Starting process...');
             raspberryPiClient.start().then((e)=>{
-                console.log('return value')
-                console.log(e)
                 e?wsSendMessage(ws,'Process successful'):wsSendMessage(ws,'Process failed');
                 if(e){
                     listFiles('./public/raw')
                     .then((files:any)=>{
-                        console.log('files:')
-                        console.log(files)
-                        wsSendJson(ws,files.map((e:any)=>`/raw/${e}`))
+                        wsSendImagesJson(ws,files.map((e:any)=>`/raw/${e}`))
                     })
                     .catch((err:null|NodeJS.ErrnoException)=>{
-                        console.log('error:')
                         console.error(err)
-                        wsSendJson(ws,[])
+                        wsSendImagesJson(ws,[])
                     })
                 }
             })

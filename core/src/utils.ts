@@ -8,15 +8,11 @@ export function sleep(ms:number) {
   }
 
 export function cleanFolder(directory:string) {
-    fs.readdir(directory, (err, files) => {
-    if (err) throw err;
-
+    let files = fs.readdirSync(directory);
     for (const file of files) {
-        fs.unlink(path.join(directory, file), err => {
-        if (err) throw err;
-        });
+            fs.unlinkSync(path.join(directory, file))
     }
-    });
+    return true
 }
 
 
@@ -62,6 +58,6 @@ export function wsSendMessage(ws:WebSocket,msg:string) {
     ws.send(JSON.stringify({message:msg}))
 }
 
-export function wsSendJson(ws:WebSocket,payload:any) {
+export function wsSendImagesJson(ws:WebSocket,payload:any) {
     ws.send(JSON.stringify({images:payload}))
 }

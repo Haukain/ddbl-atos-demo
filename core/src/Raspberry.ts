@@ -15,15 +15,14 @@ export default class Raspberry {
         return get(`${this.localIP}/`)
         .then((response:any) => {
             if(response.success){
-                console.log("connect: "+response.success)
                 return true
             }
             else if(response.error){
-                console.log("error connecting: "+response.error)
+                console.log("Error testing the connection: "+response.error)
                 return false
             }
             else {
-                console.log("unknown error connecting: "+response)
+                console.log("Unknown error testing the connection: "+response)
                 return false
             }
         })
@@ -38,24 +37,22 @@ export default class Raspberry {
         return get(`${this.localIP}/start/`)
         .then((response:any) => {
             if(response.success){
-                return this.get_images(response.success.files)
+                console.log(response.success)
+                return this.get_images(response.success.frames.map((f:any)=>f.path))
                 .then((e:any)=>{
-                    console.log('success')
-                    console.log(e)
                     return true
                 })
                 .catch((err:any)=>{
-                    console.log('fail')
                     console.error(err)
                     return false
                 })
             }
             else if(response.error){
-                console.log("error starting: "+response.error)
+                console.error("Error starting the process: "+response.error)
                 return false
             }
             else {
-                console.log("unknown error starting: "+response)
+                console.log("Unknown error starting the process: "+response)
                 return false
             }
         })

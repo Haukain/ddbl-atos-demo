@@ -6,11 +6,21 @@ function display(text,type='info'){
     $('#display-area').append(`<p class=${type}>${text}</p>`)
 }
 
-function displayImages(paths){
-    for(let p of paths){
-        let fullPath = `${httpUrl}${p}`
-        $('#display-area').append(`<img class="image" src=${fullPath}></img>`)
-    }
+function handleRawJson(rawJsonPath){
+    fetch(`${httpUrl}${rawJsonPath}`)
+    .then(response => {
+        return response.json()
+    })
+    .then(data => {
+        console.log(data)
+        for(let f of data.frames){
+            let fullImagePath = `${httpUrl}${f.path}`
+            $('#display-area').append(`<img class="image" src=${fullImagePath}></img>`)
+        }
+    })
+    .catch(err => {
+        console.error(err)
+    })
 }
 
 let socket = new WebSocket(wsUrl);
@@ -31,9 +41,8 @@ $('#connect-button').click((event)=>{
 socket.onmessage = function(event) {
     json = JSON.parse(event.data)
     if(json.message) display(`[message] Data received from server: ${json.message}`);
-    else if(json.images){
-        console.log(json.images)
-        displayImages(json.images)
+    else if(json.rawJsonPath){
+        handleRawJson(json.rawJsonPath)
     }
     else {
         console.log(json.json)

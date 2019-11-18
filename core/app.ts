@@ -2,12 +2,14 @@ import * as express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import Raspberry from './src/Raspberry';
-import { cleanFolder, listFiles, wsSendMessage, wsSendImagesJson } from './src/utils';
+import { cleanFolder, listFiles, wsSendMessage, wsSendJsonPathRaw } from './src/utils';
+var cors = require('cors')
 
 cleanFolder('public/raw')
 cleanFolder('public/predictions')
 
 const app = express();
+app.use(cors())
 app.use(express.static('public'))
 
 //initialize a simple http server
@@ -36,14 +38,7 @@ wss.on('connection', (ws: WebSocket) => {
             raspberryPiClient.start().then((e)=>{
                 e?wsSendMessage(ws,'Process successful'):wsSendMessage(ws,'Process failed');
                 if(e){
-                    listFiles('./public/raw')
-                    .then((files:any)=>{
-                        wsSendImagesJson(ws,files.map((e:any)=>`/raw/${e}`))
-                    })
-                    .catch((err:null|NodeJS.ErrnoException)=>{
-                        console.error(err)
-                        wsSendImagesJson(ws,[])
-                    })
+                    wsSendJsonPathRaw(ws,'/raw/frames.json')
                 }
             })
         }

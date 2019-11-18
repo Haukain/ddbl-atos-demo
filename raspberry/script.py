@@ -2,7 +2,10 @@ from flask import jsonify
 import time
 import cv2
 import pyzbar.pyzbar as pyzbar
+# from gpiozero import LED
 from classes import VideoFrame, QRCode, Point, BoundingBox
+
+# led = LED(17)
 
 def on_connect() :
     print("Connection from core server")
@@ -11,9 +14,10 @@ def on_connect() :
 def on_start() :
     print("Process starting")
     
+    # led.on()
     video_frames = []
-    cap = cv2.VideoCapture(0)
-    for i in range(0,50):
+    cap = cv2.VideoCapture('./test_data/test.mp4')
+    for i in range(0,40):
         ret,frame = cap.read()
 
         decodedObjects = pyzbar.decode(frame)
@@ -46,6 +50,8 @@ def on_start() :
     for v in video_frames:
         video_frames_dict.append(v.to_dict())
         print(v.path)
+
+    # led.off()
 
     return jsonify({
         'success': {

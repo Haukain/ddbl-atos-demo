@@ -1,4 +1,4 @@
-import {get,post} from './utils'
+import {get,post, writeJson} from './utils'
 import * as fs from 'fs';
 
 export default class Raspberry {
@@ -12,7 +12,7 @@ export default class Raspberry {
 
     connect(): Promise<boolean>{
         console.log(`Connection to PI ${this.id} on ${this.localIP}`)
-        return get(`${this.localIP}/`)
+        return get(`${this.localIP}/ping/`)
         .then((response:any) => {
             if(response.success){
                 return true
@@ -40,7 +40,15 @@ export default class Raspberry {
                 console.log(response.success)
                 return this.get_images(response.success.frames.map((f:any)=>f.path))
                 .then((e:any)=>{
-                    return true
+                    response.success.frames.map((f:any)=>{f.path=`/raw/${this.id}_${f.path.split('/')[1]}`})
+                    return writeJson('./public/raw/frames.json',JSON.stringify(response.success))
+                    .then(()=>{
+                        return true
+                    })
+                    .catch((err)=>{
+                        console.error(err)
+                        return false
+                    })
                 })
                 .catch((err:any)=>{
                     console.error(err)

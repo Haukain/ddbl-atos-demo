@@ -15,7 +15,6 @@ export function cleanFolder(directory:string) {
     return true
 }
 
-
 export function listFiles(directory:string){
     
     return new Promise(function(resolve, reject) {
@@ -24,6 +23,17 @@ export function listFiles(directory:string){
                 reject(err); 
             else 
                 resolve(filenames);
+        });
+    });
+}
+
+export function writeJson(path:string,json:any){
+    return new Promise(function(resolve, reject) {
+        fs.writeFile(path, json, 'utf8', function (err) {
+            if (err) {
+                return reject(err);
+            }
+            else resolve()
         });
     });
 }
@@ -58,6 +68,6 @@ export function wsSendMessage(ws:WebSocket,msg:string) {
     ws.send(JSON.stringify({message:msg}))
 }
 
-export function wsSendImagesJson(ws:WebSocket,payload:any) {
-    ws.send(JSON.stringify({images:payload}))
+export function wsSendJsonPathRaw(ws:WebSocket,path:any) {
+    ws.send(JSON.stringify({rawJsonPath:path}))
 }

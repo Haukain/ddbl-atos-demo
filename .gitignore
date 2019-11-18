@@ -4,3 +4,4 @@ core/public/raw/*
 core/public/predictions/*
 raspberry/__pycache__
 raspberry/public/*
+raspberry/test_data

@@ -13,7 +13,7 @@ for f in os.listdir(folder):
 
 app = Flask(__name__,static_folder=os.path.abspath("public/"))
 
-@app.route("/")
+@app.route("/ping/")
 def index():
     return script.on_connect()
 

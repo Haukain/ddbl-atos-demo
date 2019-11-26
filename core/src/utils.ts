@@ -27,6 +27,17 @@ export function listFiles(directory:string){
     });
 }
 
+export function listImages(directory:string){
+    
+    return new Promise(function(resolve, reject) {
+        listFiles(directory)
+        .then((filenames:any)=>{
+            resolve(filenames.filter((f:string)=>f.includes('.png')))
+        })
+        .catch((err:any)=>reject(err))
+    })
+}
+
 export function writeJson(path:string,json:any){
     return new Promise(function(resolve, reject) {
         fs.writeFile(path, json, 'utf8', function (err) {

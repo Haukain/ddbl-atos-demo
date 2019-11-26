@@ -1,5 +1,5 @@
 from flask import jsonify
-import time
+from datetime import datetime,timedelta
 import cv2
 import pyzbar.pyzbar as pyzbar
 # from gpiozero import LED
@@ -16,9 +16,13 @@ def on_start() :
     
     # led.on()
     video_frames = []
-    cap = cv2.VideoCapture('./test_data/test.mp4')
-    for i in range(0,40):
+    # cap = cv2.VideoCapture("./test_data/test.mp4")
+    cap = cv2.VideoCapture(0)
+    start = datetime.now()
+    i = 0
+    while (cap.isOpened() and (datetime.now()<start+timedelta(seconds=2))):
         ret,frame = cap.read()
+        if not ret: break
 
         decodedObjects = pyzbar.decode(frame)
 
@@ -41,15 +45,16 @@ def on_start() :
                     ))
             h, w = frame.shape[:2]
             if(qrcodes) :
-                video_frames.append(VideoFrame(w, h, qrcodes,'img/%d.png' %i))
-                cv2.imwrite('./public/%d.png' %i,frame)
+                print("Frame %d saved" %i)
+                video_frames.append(VideoFrame(w, h, qrcodes,'img/%d.jpg' %i))
+                cv2.imwrite('./public/%d.jpg' %i,frame)
+                i+=1
 
     cap.release()
 
     video_frames_dict = []
     for v in video_frames:
         video_frames_dict.append(v.to_dict())
-        print(v.path)
 
     # led.off()
 

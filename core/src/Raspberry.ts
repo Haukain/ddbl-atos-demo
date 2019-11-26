@@ -37,7 +37,6 @@ export default class Raspberry {
         return get(`${this.localIP}/start/`)
         .then((response:any) => {
             if(response.success){
-                console.log(response.success)
                 return this.get_images(response.success.frames.map((f:any)=>f.path))
                 .then((e:any)=>{
                     response.success.frames.map((f:any)=>{f.path=`/raw/${this.id}_${f.path.split('/')[1]}`})

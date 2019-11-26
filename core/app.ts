@@ -2,7 +2,8 @@ import * as express from 'express';
 import * as http from 'http';
 import * as WebSocket from 'ws';
 import Raspberry from './src/Raspberry';
-import { cleanFolder, listFiles, wsSendMessage, wsSendJsonPathRaw } from './src/utils';
+import { cleanFolder, wsSendMessage, wsSendJsonPathRaw } from './src/utils';
+import GCP from './src/GCP';
 var cors = require('cors')
 
 cleanFolder('public/raw')
@@ -19,6 +20,7 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const raspberryPiClient = new Raspberry(process.argv[2]?process.argv[2]:"localhost:5000",0);
+const GCPClient = new GCP("ddbl-project","us-central1","IOD3328692288254640128",0.5)
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -40,6 +42,12 @@ wss.on('connection', (ws: WebSocket) => {
                 if(e){
                     wsSendJsonPathRaw(ws,'/raw/frames.json')
                 }
+                // GCPClient.start()
+                // .then((prediction:any)=>{
+                //     for(let p of prediction){
+                //         wsSendMessage(ws,`${p.frame} : ${p.response.payload[0].displayName}`)
+                //     }
+                // })
             })
         }
         //log the received message and send it back to the client

@@ -3,7 +3,12 @@ const wsUrl = `ws://${ip}`
 const httpUrl = `http://${ip}`
 
 function display(text,type='info'){
-    $('#display-area').append(`<p class=${type}>${text}</p>`)
+    $('#text-display-area').append(`
+    <div class="card mb-2">
+        <div class="card-body ${type}">
+        ${text}
+        </div>
+    </div>`)
 }
 
 function handleRawJson(rawJsonPath){
@@ -13,9 +18,23 @@ function handleRawJson(rawJsonPath){
     })
     .then(data => {
         console.log(data)
+        id = $('#raw-images-display-area').length
         for(let f of data.frames){
+            imgId=`raw-img-${id}`
             let fullImagePath = `${httpUrl}${f.path}`
-            $('#display-area').append(`<img class="image" src=${fullImagePath}></img>`)
+            $('#raw-images-display-area').append(`
+                <img id="${imgId}-img" height="75px" class="image" src=${fullImagePath}></img>
+            `)
+            // $('#raw-images-display-area').append(`
+            // <div id="${imgId}-div">
+            //     <p class="font-weight-lighter">${f.width},${f.height}</p>
+            //     <div id="${imgId}-codes"></div>
+            //     <img id="${imgId}-img" height="75px" class="image" src=${fullImagePath}></img>
+            // </div>`)
+            // for(let code of f.qrcodes){
+            //     $(`#${imgId}-codes`).append(`<p class="font-weight-lighter">${code.name}</p>`)
+            // }
+            id+=1
         }
     })
     .catch(err => {
@@ -45,7 +64,7 @@ socket.onmessage = function(event) {
         handleRawJson(json.rawJsonPath)
     }
     else {
-        console.log(json.json)
+        console.log(json)
         display(json)
     }
 };

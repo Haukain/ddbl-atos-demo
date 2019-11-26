@@ -4,22 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    
+    <title>Atos showcase dashboard</title>
+    <!--Boostrap CSS import -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <!--JQuery CSS import -->
     <script
         src="https://code.jquery.com/jquery-3.4.1.min.js"
         integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
         crossorigin="anonymous">
     </script>
     <style>
-        #display-area {
-            border: solid 2px rgb(34, 34, 34);
-            margin: 10px;
-            padding: 10px;
-        }
-        .button-container {
-            margin: 5px;
-        }
         .error,
         .info{
             padding: 3px;
@@ -33,33 +27,48 @@
             color: blue
         }
         .image {
-            width: 150px;
             margin: 5px;
+            transition: transform .2s;
         }
-        button {
-            color: white;
-            border: 0;
-            border-radius: 4px;
-	        font-size:30px;
-            cursor: pointer;
-        }
-
-        #connect-button {
-            background: rgb(28, 184, 65);
-        }
-        #start-button {
-            background: rgb(66, 184, 221);
+        .image:hover {
+            transform: scale(5);
         }
     </style>
 </head>
 <body>
-    <div class="button-container">
-        <button id="connect-button">Connect</button>
-    </div>
-    <div class="button-container">
-        <button id="start-button">Start</button>
-    </div>
-    <div id="display-area">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm text-center p-3">
+                <button type="button" class="btn btn-primary" id="connect-button">Connect</button>
+            </div>
+            <div class="col-sm text-center p-3">
+                <button type="button" class="btn btn-success" id="start-button">Start</button>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-sm-8">
+                <h3>Message feed</h3>
+                <div id="text-display-area">
+                </div>
+            </div>
+            <div class="col-sm-4">
+                    <div class="row">
+                        <h3>Raw images</h3>
+                        <div id="raw-images-display-area" class="container">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h3>Prediction images</h3>
+                        <div id="prediction-images-display-area">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <h3>Report</h3>
+                        <div id="report-display-area">
+                        </div>
+                    </div>
+            </div>
+        </div>
     </div>
     
     <script src="./script.js"></script>

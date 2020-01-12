@@ -20,7 +20,17 @@ const server = http.createServer(app);
 const wss = new WebSocket.Server({ server });
 
 const raspberryPiClient = new Raspberry(process.argv[2]?process.argv[2]:"localhost:5000",0);
-const GCPClient = new GCP("ddbl-project","us-central1","IOD3328692288254640128",0.5)
+
+// TO BE FILLED IN
+const GCPProjectInfo = {
+    name: 'blank', // name of the project
+    location: 'blank', // location of the project
+    id: 'blank' // id of the project
+}
+if (GCPProjectInfo.name==="blank"||GCPProjectInfo.location==="blank"||GCPProjectInfo.id==="blank") {
+    console.log("Please fill in the GCP project information");
+}
+const GCPClient = new GCP(GCPProjectInfo.name,GCPProjectInfo.location,GCPProjectInfo.id,0.5);
 
 wss.on('connection', (ws: WebSocket) => {
 
@@ -42,12 +52,12 @@ wss.on('connection', (ws: WebSocket) => {
                 if(e){
                     wsSendJsonPathRaw(ws,'/raw/frames.json')
                 }
-                // GCPClient.start()
-                // .then((prediction:any)=>{
-                //     for(let p of prediction){
-                //         wsSendMessage(ws,`${p.frame} : ${p.response.payload[0].displayName}`)
-                //     }
-                // })
+                GCPClient.start()
+                .then((prediction:any)=>{
+                    for(let p of prediction){
+                        wsSendMessage(ws,`${p.frame} : ${p.response.payload[0].displayName}`)
+                    }
+                })
             })
         }
         //log the received message and send it back to the client

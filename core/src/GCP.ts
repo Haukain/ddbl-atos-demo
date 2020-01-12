@@ -26,6 +26,7 @@ export default class GCP {
     }
     
     start() {
+        console.log("starting cloud connection")
         
         const params:any= {};
         

@@ -32,7 +32,7 @@ export function listImages(directory:string){
     return new Promise(function(resolve, reject) {
         listFiles(directory)
         .then((filenames:any)=>{
-            resolve(filenames.filter((f:string)=>{f.includes('.jpg')||f.includes('.png')}))
+            resolve(filenames.filter((f:string)=>{return (f.includes('.jpg')||f.includes('.png'))}))
         })
         .catch((err:any)=>reject(err))
     })
